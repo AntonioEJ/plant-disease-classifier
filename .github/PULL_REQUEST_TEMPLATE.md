@@ -10,14 +10,6 @@
 
 ## ✅ Checklist antes de solicitar review
 
-### Código
-- [ ] El código pasa `pytest tests/ -v` sin errores
-- [ ] Se usó `python train.py` con los argumentos correctos
-- [ ] No se modificó `base_config.yaml` sin consenso del equipo
-- [ ] No se modificó `data/splits/splits.json`
-- [ ] Se usó `preprocess_input` del modelo (NO `rescale=1./255`)
-- [ ] Augmentation solo en train (`augment=True` solo para train_ds)
-
 ### Reproducibilidad
 - [ ] El experimento usa `seed=42`
 - [ ] El experimento usa `data/splits/splits.json` compartido

@@ -1,0 +1,10 @@
+# DenseNet121 — configuración del modelo
+# Hereda de base_config.yaml
+
+model:
+  name: "DenseNet121"
+  backbone: "densenet121"
+  input_shape: [224, 224, 3]
+  weights: "imagenet"
+  include_top: false
+  preprocessing: "keras.applications.densenet.preprocess_input"

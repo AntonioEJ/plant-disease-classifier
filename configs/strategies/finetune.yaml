@@ -1,0 +1,25 @@
+# Estrategia: Fine-tuning
+# Descripción: Primero entrena la cabeza, luego descongela las últimas capas del backbone.
+# Ideal para: dominio similar a ImageNet con suficientes datos.
+
+strategy:
+  name: "finetune"
+  description: "Fase 1: entrenar cabeza. Fase 2: descongelar últimas N capas del backbone."
+  phases:
+    - name: "train_head"
+      freeze_backbone: true
+      unfreeze_from_layer: null
+      epochs: 10
+      optimizer:
+        name: "adam"
+        learning_rate: 1.0e-3
+
+    - name: "finetune"
+      freeze_backbone: false
+      # Descongelar las últimas 30 capas del backbone
+      # Valor negativo = "últimas N capas"
+      unfreeze_from_layer: -30
+      epochs: 40
+      optimizer:
+        name: "adam"
+        learning_rate: 1.0e-5   # LR muy bajo para no destruir pesos pre-entrenados

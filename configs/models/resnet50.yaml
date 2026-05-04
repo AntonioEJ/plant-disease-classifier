@@ -1,0 +1,11 @@
+# ResNet50 — configuración del modelo
+# Hereda de base_config.yaml
+
+model:
+  name: "ResNet50"
+  backbone: "resnet50"
+  input_shape: [224, 224, 3]
+  weights: "imagenet"
+  include_top: false
+  # ⚠️ IMPORTANTE: usar preprocess_input en lugar de rescale=1./255
+  preprocessing: "keras.applications.resnet50.preprocess_input"

@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+.venv
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDEs
+.idea/
+*.swp
+*.swo
+
+# ─── DATOS (nunca commitear el dataset) ───────────────────────────────────────
+data/raw/
+data/processed/
+data/splits/*.json       # ⚠️ Excepción: splits.json SÍ debe commitearse
+!data/splits/.gitkeep
+
+# ─── MODELOS ENTRENADOS (usar Git LFS o DVC si se requiere versionar) ──────────
+experiments/**/*.keras
+experiments/**/*.h5
+experiments/**/*.pb
+experiments/**/tensorboard/
+experiments/**/*.npy        # ⚠️ Excepción: los numpy de confusión se pueden commitear
+                             # Descomentar si se quieren incluir:
+# !experiments/**/confusion_matrix.npy
+
+# Sí commitear estos archivos de experimentos:
+!experiments/**/metrics.json
+!experiments/**/classification_report.txt
+!experiments/**/model_summary.txt
+!experiments/**/*_epoch_log.csv
+!experiments/**/figures/*.png
+!experiments/all_results.csv
+
+# ─── REPORTES ─────────────────────────────────────────────────────────────────
+# Sí commitear figures y CSVs de reportes
+
+# ─── ENVIRONMENT ──────────────────────────────────────────────────────────────
+.kaggle/
+kaggle.json
+*.env
+.env.*
+
+# ─── LOGS ─────────────────────────────────────────────────────────────────────
+logs/
+*.log
+
+# ─── MLflow ───────────────────────────────────────────────────────────────────
+mlruns/
+mlartifacts/

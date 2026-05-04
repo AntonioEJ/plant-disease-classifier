@@ -1,0 +1,76 @@
+# =============================================================================
+# BASE CONFIGURATION — plant-disease-classifier
+# Todos los experimentos heredan de este archivo.
+# NO modificar sin consenso del equipo (afecta comparabilidad).
+# =============================================================================
+
+project:
+  name: "plant-disease-classifier"
+  seed: 42
+  version: "1.0.0"
+
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  splits_dir: "data/splits"
+  image_size: [224, 224]
+  channels: 3
+  batch_size: 32
+  num_workers: 4
+  # ⚠️ CRÍTICO: estos ratios NO deben cambiarse — garantizan comparabilidad
+  train_ratio: 0.70
+  val_ratio: 0.15
+  test_ratio: 0.15
+  stratify: true
+  class_names:
+    0: "healthy"
+    1: "diseased"
+
+# Data augmentation SOLO en train — val/test sin augmentation
+augmentation:
+  train:
+    horizontal_flip: true
+    vertical_flip: false
+    rotation_range: 20
+    zoom_range: 0.15
+    width_shift_range: 0.1
+    height_shift_range: 0.1
+    brightness_range: [0.8, 1.2]
+    fill_mode: "nearest"
+  val: {}
+  test: {}
+
+training:
+  loss: "binary_crossentropy"
+  use_class_weights: true   # Manejo de desbalance de clases
+  epochs: 50
+  early_stopping_patience: 10
+  reduce_lr_patience: 5
+  reduce_lr_factor: 0.5
+  min_lr: 1.0e-7
+
+# Arquitectura de la cabeza — FIJA para todos los experimentos
+head:
+  pooling: "GlobalAveragePooling2D"
+  dense_units: 128
+  dense_activation: "relu"
+  dropout_rate: 0.4
+  output_units: 1
+  output_activation: "sigmoid"
+
+metrics:
+  priority: "recall"   # Objetivo de negocio: minimizar falsos negativos
+  monitor: ["accuracy", "precision", "recall", "f1_score"]
+
+outputs:
+  base_dir: "experiments"
+  save_history: true
+  save_confusion_matrix: true
+  save_classification_report: true
+  save_model_summary: true
+  save_results_csv: true
+  save_best_model: true
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s | %(levelname)s | %(name)s | %(message)s"

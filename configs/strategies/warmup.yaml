@@ -1,0 +1,33 @@
+# Estrategia: Warm-up (descongelamiento progresivo)
+# Descripción: Freeze → entrenar cabeza → descongelar parcialmente → descongelar total
+# Ideal para: dominios distantes a ImageNet, datasets pequeños.
+
+strategy:
+  name: "warmup"
+  description: "Descongelamiento progresivo en 3 fases para estabilidad de entrenamiento."
+  phases:
+    - name: "freeze"
+      freeze_backbone: true
+      unfreeze_from_layer: null
+      epochs: 10
+      optimizer:
+        name: "adam"
+        learning_rate: 1.0e-3
+
+    - name: "unfreeze_partial"
+      freeze_backbone: false
+      # Descongelar últimas 50 capas
+      unfreeze_from_layer: -50
+      epochs: 15
+      optimizer:
+        name: "adam"
+        learning_rate: 1.0e-4
+
+    - name: "unfreeze_full"
+      freeze_backbone: false
+      # Descongelar backbone completo
+      unfreeze_from_layer: 0
+      epochs: 25
+      optimizer:
+        name: "adam"
+        learning_rate: 1.0e-5

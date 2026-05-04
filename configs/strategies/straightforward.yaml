@@ -1,0 +1,15 @@
+# Estrategia: Straightforward
+# Descripción: Backbone 100% congelado. Solo se entrena la cabeza de clasificación.
+# Ideal para: baseline rápido, cuando los datos son similares a ImageNet.
+
+strategy:
+  name: "straightforward"
+  description: "Backbone completamente congelado. Solo se entrena la cabeza."
+  phases:
+    - name: "train_head"
+      freeze_backbone: true
+      unfreeze_from_layer: null
+      epochs: 50
+      optimizer:
+        name: "adam"
+        learning_rate: 1.0e-3

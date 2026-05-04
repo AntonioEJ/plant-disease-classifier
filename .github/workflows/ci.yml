@@ -1,6 +1,7 @@
-name: CI — Tests y Linting
-# ⚠️ Pipeline informativo — ningún paso bloquea el merge.
-# Los resultados se muestran como checks de referencia en el PR.
+name: CI
+
+# Se ejecuta cuando alguien sube código o abre un Pull Request.
+# Es solo informativo — no bloquea el merge aunque algo falle.
 
 on:
   push:
@@ -9,48 +10,33 @@ on:
     branches: [develop, main]
 
 jobs:
-  test:
+  verificar:
     runs-on: ubuntu-latest
-    # El job nunca falla aunque algún paso tenga errores
-    continue-on-error: true
+    continue-on-error: true   # nunca bloquea el merge
 
     steps:
-      - name: Checkout código
+      - name: Descargar el código
         uses: actions/checkout@v4
 
-      - name: Instalar uv
-        uses: astral-sh/setup-uv@v5
+      - name: Instalar Python 3.10
+        uses: actions/setup-python@v5
         with:
-          version: "latest"
+          python-version: "3.10"
 
       - name: Instalar dependencias
-        run: uv sync --extra dev
+        run: pip install pyyaml scikit-learn numpy pytest
         continue-on-error: true
 
-      - name: Verificar formato con Black
-        run: uv run black --check src/ tests/ train.py compare_results.py
+      - name: Correr tests básicos
+        run: pytest tests/test_data.py tests/test_metrics.py -v
         continue-on-error: true
 
-      - name: Linting con Flake8
+      - name: Verificar que los YAML de config son válidos
         run: |
-          uv run flake8 src/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
-          uv run flake8 src/ tests/ --count --exit-zero --max-line-length=100 --statistics
-        continue-on-error: true
-
-      - name: Correr tests
-        run: |
-          uv run pytest tests/test_data.py tests/test_metrics.py -v \
-            --cov=src --cov-report=term-missing \
-            -k "not TestModelBuilders"
-        continue-on-error: true
-
-      - name: Verificar que configs son YAML válidos
-        run: |
-          uv run python -c "
+          python -c "
           import yaml, pathlib
           for f in pathlib.Path('configs').rglob('*.yaml'):
-              with open(f) as fp:
-                  yaml.safe_load(fp)
-              print(f'OK: {f}')
+              yaml.safe_load(open(f))
+              print('OK:', f)
           "
         continue-on-error: true

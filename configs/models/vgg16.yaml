@@ -4,7 +4,3 @@
 model:
   name: "VGG16"
   backbone: "vgg16"
-  input_shape: [224, 224, 3]
-  weights: "imagenet"
-  include_top: false
-  preprocessing: "keras.applications.vgg16.preprocess_input"

@@ -25,17 +25,15 @@ Dataset: [PlantVillage (Kaggle)](https://www.kaggle.com/datasets/arjuntejaswi/pl
 
 | Modelo | Estrategia | Responsable | Branch |
 |---|---|---|---|
-| ResNet50 | Straightforward | Antonio | `feature/antonio/resnet-straightforward` |
+| ResNet50 | Straightforward | Alondra | `feature/alondra/resnet-straightforward` |
 | ResNet50 | Fine-tuning | Paulo | `feature/paulo/resnet-finetune` |
 | ResNet50 | Warm-up | Antonio | `feature/antonio/resnet-warmup` |
 | DenseNet121 | Straightforward | Paulo | `feature/paulo/densenet-straightforward` |
 | DenseNet121 | Fine-tuning | Arlette | `feature/arlette/densenet-finetune` |
 | DenseNet121 | Warm-up | Antonio | `feature/antonio/densenet-warmup` |
-| VGG16 | Straightforward | Antonio | `feature/antonio/vgg-straightforward` |
-| VGG16 | Fine-tuning | Antonio | `feature/antonio/vgg-finetune` |
+| VGG16 | Straightforward | Alondra | `feature/alondra/vgg-straightforward` |
+| VGG16 | Fine-tuning | Alondra | `feature/alondra/vgg-finetune` |
 | VGG16 | Warm-up | Arlette | `feature/arlette/vgg-warmup` |
-
-> **Alondra** apoya en integración, análisis de resultados y notebook de comparación.
 
 ---
 
@@ -181,11 +179,11 @@ uv run kaggle datasets download -d arjuntejaswi/plant-village \
 ```
 main          ← Estable, solo acepta merge desde develop con resultados finales
   └── develop ← Integración continua, todos los PRs apuntan aquí
-        ├── feature/antonio/resnet-straightforward
+        ├── feature/alondra/resnet-straightforward
+        ├── feature/alondra/vgg-straightforward
+        ├── feature/alondra/vgg-finetune
         ├── feature/antonio/resnet-warmup
         ├── feature/antonio/densenet-warmup
-        ├── feature/antonio/vgg-straightforward
-        ├── feature/antonio/vgg-finetune
         ├── feature/paulo/resnet-finetune
         ├── feature/paulo/densenet-straightforward
         ├── feature/arlette/densenet-finetune
@@ -216,17 +214,32 @@ uv run python train.py --model resnet50 --strategy straightforward \
 ```bash
 # Ejemplos de cada miembro:
 
-# Antonio — ResNet50 Straightforward
-uv run python train.py --model resnet50 --strategy straightforward --member antonio
+# Alondra — ResNet50 Straightforward
+uv run python train.py --model resnet50 --strategy straightforward --member alondra
 
 # Paulo — ResNet50 Fine-tuning
 uv run python train.py --model resnet50 --strategy finetune --member paulo
 
+# Antonio — ResNet50 Warm-up
+uv run python train.py --model resnet50 --strategy warmup --member antonio
+
+# Paulo — DenseNet121 Straightforward
+uv run python train.py --model densenet121 --strategy straightforward --member paulo
+
 # Arlette — DenseNet121 Fine-tuning
 uv run python train.py --model densenet121 --strategy finetune --member arlette
 
-# Antonio — VGG16 Warm-up
-uv run python train.py --model vgg16 --strategy warmup --member antonio
+# Antonio — DenseNet121 Warm-up
+uv run python train.py --model densenet121 --strategy warmup --member antonio
+
+# Alondra — VGG16 Straightforward
+uv run python train.py --model vgg16 --strategy straightforward --member alondra
+
+# Alondra — VGG16 Fine-tuning
+uv run python train.py --model vgg16 --strategy finetune --member alondra
+
+# Arlette — VGG16 Warm-up
+uv run python train.py --model vgg16 --strategy warmup --member arlette
 ```
 
 ### Paso 3 — Ver TensorBoard

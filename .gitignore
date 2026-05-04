@@ -37,7 +37,8 @@ htmlcov/
 # ─── DATOS (nunca commitear el dataset) ───────────────────────────────────────
 data/raw/
 data/processed/
-data/splits/*.json       # ⚠️ Excepción: splits.json SÍ debe commitearse
+data/splits/*.json       # Por defecto ignorar todos los JSON de splits
+!data/splits/splits.json # ✅ Excepción: splits.json SÍ debe commitearse
 !data/splits/.gitkeep
 
 # ─── MODELOS ENTRENADOS (usar Git LFS o DVC si se requiere versionar) ──────────

@@ -1,3 +1,4 @@
 model:
   name: "ResNet50"
   backbone: "resnet50"
+  type: "<RELLENAR: Straightforward | Fine Tuning | Warm-up>"

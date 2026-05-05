@@ -4,3 +4,4 @@
 model:
   name: "VGG16"
   backbone: "vgg16"
+  type: "<RELLENAR: Straightforward | Fine Tuning | Warm-up>"

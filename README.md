@@ -1,3 +1,4 @@
+
 # 🌿 Plant Disease Classifier — Deep Learning
 
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://python.org)
@@ -21,94 +22,60 @@ Dataset: [PlantVillage (Kaggle)](https://www.kaggle.com/datasets/arjuntejaswi/pl
 
 ---
 
+
 ## 👥 Equipo y Distribución de Experimentos
 
-| Modelo | Estrategia | Responsable | Branch |
-|---|---|---|---|
-| ResNet50 | Straightforward | Alondra | `feature/alondra/resnet-straightforward` |
-| ResNet50 | Fine-tuning | Paulo | `feature/paulo/resnet-finetune` |
-| ResNet50 | Warm-up | Antonio | `feature/antonio/resnet-warmup` |
-| DenseNet121 | Straightforward | Paulo | `feature/paulo/densenet-straightforward` |
-| DenseNet121 | Fine-tuning | Arlette | `feature/arlette/densenet-finetune` |
-| DenseNet121 | Warm-up | Antonio | `feature/antonio/densenet-warmup` |
-| VGG16 | Straightforward | Alondra | `feature/alondra/vgg-straightforward` |
-| VGG16 | Fine-tuning | Alondra | `feature/alondra/vgg-finetune` |
-| VGG16 | Warm-up | Arlette | `feature/arlette/vgg-warmup` |
+Cada miembro trabaja en su propia rama personal y carpeta de experimentos:
+
+| Miembro   | Rama      | Carpeta de resultados         |
+|-----------|-----------|------------------------------|
+| Antonio   | `antonio` | `experiments/antonio/`       |
+| Alondra   | `alondra` | `experiments/alondra/`       |
+| Paulo     | `paulo`   | `experiments/paulo/`         |
+| Arlette   | `arlette` | `experiments/arlette/`       |
+
+Cada quien puede organizar sus experimentos y notebooks como prefiera dentro de su carpeta.
+Para compartir resultados finales, haz un Pull Request de tu rama personal a `develop` o `main`.
 
 ---
 
-## 🏗️ Estructura del Repositorio
+## 🏗️ Estructura del Repositorio (carpetas principales)
+
 
 ```
-plant-disease-classifier/
+configs/        # Configuraciones YAML de experimentos
+data/           # Datos (no se suben al repo)
+experiments/    # Resultados de cada miembro y métricas
 │
-├── configs/                    # Configuraciones YAML de experimentos
-│   ├── base_config.yaml        # ⚠️ Config base compartida — no modificar sin consenso
-│   ├── models/
-│   │   ├── resnet50.yaml
-│   │   ├── densenet121.yaml
-│   │   └── vgg16.yaml
-│   └── strategies/
-│       ├── straightforward.yaml
-│       ├── finetune.yaml
-│       └── warmup.yaml
+├── antonio/
+│   ├── resnet50_warmup/
+│   │   ├── metrics.json
+│   │   ├── classification_report.txt
+│   │   ├── model_summary.txt
+│   │   └── figures/
+│   ├── densenet121_warmup/
+│   │   └── ...
 │
-├── data/                       # Datos (gitignored)
-│   ├── raw/                    # Dataset original descargado de Kaggle
-│   ├── processed/              # Datos procesados (si aplica)
-│   └── splits/
-│       └── splits.json         # ✅ COMPARTIR con el equipo — split único
+├── alondra/
+│   ├── resnet50_straightforward/
+│   ├── vgg16_straightforward/
+│   ├── vgg16_finetune/
+│   └── ...
 │
-├── src/                        # Código fuente
-│   ├── data/
-│   │   ├── dataset.py          # Pipeline tf.data, scan_plant_village
-│   │   └── splits.py           # Splits estratificados reproducibles
-│   ├── models/
-│   │   ├── base_model.py       # Cabeza, freeze/unfreeze, compile
-│   │   ├── resnet50.py
-│   │   ├── densenet121.py
-│   │   └── vgg16.py
-│   ├── training/
-│   │   ├── trainer.py          # Trainer multi-fase unificado
-│   │   ├── callbacks.py        # Stack de callbacks estándar
-│   │   └── class_weights.py    # Manejo de desbalance
-│   ├── evaluation/
-│   │   ├── metrics.py          # Evaluación completa + CSV maestro
-│   │   └── visualize.py        # Plots de history y confusion matrix
-│   └── utils/
-│       ├── config.py           # Loader de configs YAML
-│       ├── logger.py           # Logger estructurado
-│       └── seed.py             # Reproducibilidad global
+├── paulo/
+│   ├── resnet50_finetune/
+│   ├── densenet121_straightforward/
+│   └── ...
 │
-├── experiments/                # Outputs de experimentos (gitignored excepto CSV)
-│   ├── antonio/
-│   ├── alondra/
-│   ├── paulo/
-│   ├── arlette/
-│   └── all_results.csv         # ✅ CSV maestro — agregar al repo tras cada experimento
+├── arlette/
+│   ├── densenet121_finetune/
+│   ├── vgg16_warmup/
+│   └── ...
 │
-├── notebooks/
-│   └── results_comparison.ipynb  # Análisis final del equipo
-│
-├── reports/
-│   ├── figures/                # Gráficas generadas
-│   └── results/                # CSVs de resultados consolidados
-│
-├── tests/
-│   ├── test_data.py
-│   ├── test_metrics.py
-│   └── test_models.py
-│
-├── .github/
-│   ├── PULL_REQUEST_TEMPLATE.md
-│   └── workflows/ci.yml
-│
-├── train.py                    # Punto de entrada principal
-├── compare_results.py          # Agregación y comparación de resultados
-├── requirements.txt
-├── environment.yml
-├── CONTRIBUTING.md
-└── README.md
+├── all_results.csv           # Tabla resumen de todos los experimentos
+
+notebooks/      # Análisis y comparación de resultados
+reports/        # Figuras y reportes
 ```
 
 ---
@@ -122,170 +89,108 @@ plant-disease-classifier/
 | Split | 70% train / 15% val / 15% test |
 | Split strategy | Estratificado por clase |
 | Tamaño de imagen | 224×224×3 |
-| Preprocesamiento | `preprocess_input` del modelo (NO `rescale=1./255`) |
-| Augmentation | Solo en train |
-| Cabeza | GAP → Dense(128, relu) → Dropout(0.4) → Dense(1, sigmoid) |
-| Loss | binary_crossentropy |
-| Class weights | Sí (balanced) |
-| Seed | 42 |
-
----
-
-## 🚀 Instalación
-
-Este proyecto usa **[uv](https://docs.astral.sh/uv/)** como gestor de entorno y dependencias.
-
-### Instalar uv (si no lo tienes)
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-### Clonar e instalar
-```bash
-git clone <repo_url>
-cd plant-disease-classifier
-
-# Crear virtualenv e instalar dependencias de producción + desarrollo
-uv sync --extra dev
-
-# (Opcional) Incluir también las herramientas de tracking MLflow/TensorBoard
-uv sync --extra dev --extra tracking
-```
-
-El virtualenv queda en `.venv/` dentro del repositorio. No necesitas activarlo manualmente.
-
-### Configurar Kaggle API
-```bash
-# 1. Descargar kaggle.json desde https://www.kaggle.com/settings
-mkdir -p ~/.kaggle
-cp kaggle.json ~/.kaggle/
-chmod 600 ~/.kaggle/kaggle.json
-```
-
----
-
-## 📥 Descarga del Dataset
-
-```bash
-uv run kaggle datasets download -d arjuntejaswi/plant-village \
-    -p data/raw/ --unzip
-# El directorio resultante debe ser: data/raw/PlantVillage/
-```
-
----
-
-## 🔀 Estrategia de Branching
-
-```
-main          ← Estable, solo acepta merge desde develop con resultados finales
-  └── develop ← Integración continua, todos los PRs apuntan aquí
-        ├── feature/alondra/resnet-straightforward
-        ├── feature/alondra/vgg-straightforward
-        ├── feature/alondra/vgg-finetune
-        ├── feature/antonio/resnet-warmup
-        ├── feature/antonio/densenet-warmup
-        ├── feature/paulo/resnet-finetune
-        ├── feature/paulo/densenet-straightforward
-        ├── feature/arlette/densenet-finetune
-        └── feature/arlette/vgg-warmup
-```
-
-### Crear tu branch
-```bash
-git checkout develop
-git pull origin develop
-git checkout -b feature/<tu-nombre>/<modelo>-<estrategia>
-# Ejemplo:
-git checkout -b feature/antonio/resnet-warmup
-```
-
----
-
-## 🏋️ Correr un Experimento
-
-### Paso 1 — Generar splits (solo la primera vez, UN solo miembro)
-```bash
-uv run python train.py --model resnet50 --strategy straightforward \
-    --member antonio --data_dir data/raw/PlantVillage
-# Esto genera data/splits/splits.json — COMPARTIR con el equipo via Git LFS o Drive
-```
-
-### Paso 2 — Entrenar (todos los demás usan el splits.json existente)
-```bash
-# Ejemplos de cada miembro:
-
-# Alondra — ResNet50 Straightforward
-uv run python train.py --model resnet50 --strategy straightforward --member alondra
-
-# Paulo — ResNet50 Fine-tuning
 uv run python train.py --model resnet50 --strategy finetune --member paulo
+# 🌿 Plant Disease Classifier — Deep Learning
 
-# Antonio — ResNet50 Warm-up
-uv run python train.py --model resnet50 --strategy warmup --member antonio
+Clasificación binaria de enfermedades en hojas de plantas mediante transfer learning.
+Dataset: [PlantVillage (Kaggle)](https://www.kaggle.com/datasets/arjuntejaswi/plant-village)
 
-# Paulo — DenseNet121 Straightforward
-uv run python train.py --model densenet121 --strategy straightforward --member paulo
+---
 
-# Arlette — DenseNet121 Fine-tuning
-uv run python train.py --model densenet121 --strategy finetune --member arlette
+## 📋 Descripción breve
 
-# Antonio — DenseNet121 Warm-up
-uv run python train.py --model densenet121 --strategy warmup --member antonio
+Proyecto colaborativo para detectar enfermedades en plantas usando deep learning. El flujo es 100% con notebooks de Python, sin scripts ni módulos extra.
 
-# Alondra — VGG16 Straightforward
-uv run python train.py --model vgg16 --strategy straightforward --member alondra
+---
 
-# Alondra — VGG16 Fine-tuning
-uv run python train.py --model vgg16 --strategy finetune --member alondra
+## 📁 Estructura del repositorio
 
-# Arlette — VGG16 Warm-up
-uv run python train.py --model vgg16 --strategy warmup --member arlette
 ```
-
-### Paso 3 — Ver TensorBoard
-```bash
-uv run tensorboard --logdir experiments/
-```
-
-### Paso 4 — Comparar resultados del equipo
-```bash
-uv run python compare_results.py
+configs/        # Configuraciones YAML de experimentos
+data/           # Datos locales (no se suben al repo)
+experiments/    # Resultados y análisis de cada miembro
+notebooks/      # Notebooks principales (EDA, split, entrenamiento, análisis)
+reports/        # Figuras y reportes
 ```
 
 ---
 
-## 🔬 Estrategias de Transfer Learning
 
-### Straightforward
-El backbone queda completamente congelado. Solo se entrena la cabeza.
-```
-[ImageNet weights] → FROZEN backbone → HEAD (trainable)
-```
-**Cuándo funciona bien:** cuando las imágenes son similares a ImageNet.
 
-### Fine-tuning
-Fase 1: entrenar la cabeza. Fase 2: descongelar las últimas N capas.
-```
-Fase 1: FROZEN backbone → HEAD (trainable) → 10 épocas, lr=1e-3
-Fase 2: PARTIAL backbone → HEAD (trainable) → 40 épocas, lr=1e-5
-```
-**Cuándo funciona bien:** con suficientes datos y dominio similar.
+## 🚦 Descarga de datos desde Kaggle
 
-### Warm-up (descongelamiento progresivo)
-```
-Fase 1: FROZEN backbone → HEAD (10 épocas, lr=1e-3)
-Fase 2: Últimas 50 capas descongeladas (15 épocas, lr=1e-4)
-Fase 3: Backbone completo (25 épocas, lr=1e-5)
-```
-**Cuándo funciona bien:** dominio distante a ImageNet o datasets pequeños.
+1. Instala [uv](https://astral.sh/uv/) si no lo tienes:
+    ```bash
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    ```
+
+2. Instala la Kaggle CLI:
+    ```bash
+    uv pip install kaggle
+    ```
+
+3. Descarga tu archivo `kaggle.json` desde https://www.kaggle.com/settings
+    y colócalo en `~/.kaggle/kaggle.json`:
+    ```bash
+    mkdir -p ~/.kaggle
+    cp /ruta/al/kaggle.json ~/.kaggle/
+    chmod 600 ~/.kaggle/kaggle.json
+    ```
+
+4. Descarga el dataset:
+    ```bash
+    uv run kaggle datasets download -d arjuntejaswi/plant-village -p data/raw/ --unzip
+    # El directorio resultante debe ser: data/raw/PlantVillage/
+    ```
 
 ---
 
-## 📊 Métricas
+## 🚦 ¿Cómo usar los notebooks?
 
-| Métrica | Prioridad | Por qué |
-|---|---|---|
-| **Recall** | 🔴 ALTA | Detectar todas las plantas enfermas. Un FN = planta enferma que se propaga. |
+1. Abre y ejecuta los notebooks en la carpeta `notebooks/`:
+    - `split_dataset.ipynb`: genera los splits de train/val/test y los guarda en JSON.
+    - `dataset_pipeline.ipynb`: funciones para cargar y preparar datos con tf.data.
+    - Otros notebooks: experimentos, análisis, visualización.
+2. Guarda tus resultados y análisis en tu carpeta dentro de `experiments/`.
+
+---
+
+## ⚙️ Criterios base para todos los experimentos
+
+| Criterio         | Valor                                  |
+|------------------|----------------------------------------|
+| Split            | 70% train / 15% val / 15% test         |
+| Estrategia split | Estratificado por clase                |
+| Tamaño imagen    | 224×224×3                              |
+| Preprocesamiento | `preprocess_input` del modelo          |
+| Augmentation     | Solo en train                          |
+| Cabeza           | GAP → Dense(128, relu) → Dropout(0.4) → Dense(1, sigmoid) |
+| Loss             | binary_crossentropy                    |
+| Class weights    | Sí (balanced)                          |
+| Seed             | 42                                     |
+
+---
+
+## 🧑‍💻 Buenas prácticas
+
+- Usa solo notebooks para todo el flujo (EDA, split, entrenamiento, análisis).
+- Documenta tus experimentos y resultados en tu carpeta de `experiments/`.
+- Si necesitas compartir splits, súbelos a `data/splits/` o usa Drive.
+- No subas datos originales ni archivos pesados al repositorio.
+
+---
+
+## 📚 Notebooks principales
+
+- `notebooks/split_dataset.ipynb`: Split reproducible y guardado en JSON.
+- `notebooks/dataset_pipeline.ipynb`: Funciones para cargar/preparar datos.
+- `notebooks/`: Agrega aquí tus experimentos y análisis.
+
+---
+
+## 📝 ¿Dudas?
+
+Pregunta en el grupo o revisa los notebooks de ejemplo. El flujo es simple y todo se hace desde notebooks.
 | F1-Score | 🟡 MEDIA | Balance entre Recall y Precision |
 | Precision | 🟡 MEDIA | Evitar sobrealarmar con FP |
 | Accuracy | 🟢 BAJA | Puede ser engañosa con desbalance de clases |
@@ -300,26 +205,6 @@ Fase 3: Backbone completo (25 épocas, lr=1e-5)
 4. Hacer commit incluyendo: código + metrics.json + figures/
 5. Abrir PR hacia `develop` usando el template de PR
 6. Solicitar review de otro miembro del equipo
-
----
-
-## 🧪 Tests
-
-```bash
-# Todos los tests
-uv run pytest tests/ -v
-
-# Solo tests de datos
-uv run pytest tests/test_data.py -v
-
-# Solo tests de modelos (requiere TensorFlow)
-uv run pytest tests/test_models.py -v
-
-# Con cobertura
-uv run pytest tests/ --cov=src --cov-report=term-missing
-```
-
----
 
 ## 📂 Outputs por Experimento
 
@@ -344,30 +229,36 @@ resnet50_warmup/
 
 ---
 
+git clone https://github.com/antonioesparza/plant-disease-classifier.git
+
 ## 🔄 Reproducibilidad
 
-Para reproducir exactamente un experimento:
+Para reproducir exactamente un experimento (flujo 100% notebooks):
 
 ```bash
-# 1. Clonar el repositorio
-git clone <repo_url>
+# 1. Clona el repositorio
+git clone https://github.com/antonioesparza/plant-disease-classifier.git
 cd plant-disease-classifier
 
-# 2. Instalar dependencias
+# 2. Instala dependencias (usa uv o conda)
+uv pip install -r requirements.txt
+# o bien
 conda env create -f environment.yml
 conda activate plant-disease-dl
 
-# 3. Descargar el dataset
-kaggle datasets download -d arjuntejaswi/plant-village -p data/raw/ --unzip
+# 3. Descarga el dataset de Kaggle
+uv run kaggle datasets download -d arjuntejaswi/plant-village -p data/raw/ --unzip
 
-# 4. Obtener el splits.json del equipo (via repo o Drive)
+# 4. Copia el splits.json compartido (repo o Drive)
 # cp /ruta/compartida/splits.json data/splits/
 
-# 5. Correr el experimento
-python train.py --model resnet50 --strategy warmup --member antonio
+# 5. Abre y ejecuta los notebooks en Jupyter/VS Code
+#   - notebooks/split_dataset.ipynb (opcional, si quieres regenerar splits)
+#   - notebooks/dataset_pipeline.ipynb (carga/preprocesamiento)
+#   - Tu notebook de experimento
 ```
 
-El seed 42 está fijo en `configs/base_config.yaml` y en `src/utils/seed.py`.
+El seed 42 está fijo en `configs/base_config.yaml` para asegurar reproducibilidad.
 
 ---
 

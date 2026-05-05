@@ -1,3 +1,4 @@
 model:
   name: "DenseNet121"
   backbone: "densenet121"
+  type: "<RELLENAR: Straightforward | Fine Tuning | Warm-up>"

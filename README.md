@@ -262,14 +262,13 @@ El seed 42 está fijo en `configs/base_config.yaml` para asegurar reproducibilid
 
 ---
 
-## 🛠️ Herramientas de MLOps
+## 🛠️ Herramientas de ML
 
 | Herramienta | Propósito | Comando |
 |---|---|---|
 | TensorBoard | Visualizar entrenamiento en tiempo real | `tensorboard --logdir experiments/` |
 | MLflow (opcional) | Tracking de experimentos centralizado | `mlflow ui` |
-| pytest | Tests de pipeline | `pytest tests/ -v` |
-| Black | Formateo de código | `black src/ tests/` |
+
 
 ---
 
